@@ -11,6 +11,7 @@ import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
 import study.datajpa.entity.Team;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -140,6 +141,17 @@ class MemberRepositoryTest {
 
         List<MemberDto> result = memberRepository.findMemberDto();
         assertThat(result.get(0).getTeamName()).isEqualTo(team.getName());
+    }
+
+    @Test
+    public void findByNames() {
+        Member member1 = new Member("AAA", 10, null);
+        Member member2 = new Member("BBB", 20, null);
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+
+        List<Member> result = memberRepository.finByNames(Arrays.asList(member1.getUsername(), member2.getUsername()));
+        assertThat(result).containsExactly(member1, member2);
     }
 
 }

@@ -35,6 +35,8 @@ class MemberRepositoryTest {
     @Autowired TeamRepository teamRepository;
     @PersistenceContext EntityManager em;
 
+    @Autowired MemberQueryRepository memberQueryRepository;
+
     /**
      * Rollback false 로 인한
      * 실행되는 Query 확인용
@@ -307,6 +309,11 @@ class MemberRepositoryTest {
         em.clear();
 
         List<Member> findMember = memberRepository.findLockByUsername("member1");
+    }
+
+    @Test
+    public void callCustom() {
+        List<Member> result = memberRepository.findMemberCustom();
     }
 }
 

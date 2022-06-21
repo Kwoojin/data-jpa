@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import study.datajpa.dto.MemberDto;
@@ -13,8 +14,11 @@ import study.datajpa.entity.Team;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
+
 
 @SpringBootTest
 @Transactional
@@ -154,5 +158,21 @@ class MemberRepositoryTest {
         assertThat(result).containsExactly(member1, member2);
     }
 
+    @Test
+    public void returnType() {
+        Member member1 = new Member("AAA", 10, null);
+        Member member2 = new Member("AAA", 20, null);
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+
+        List<Member> listMember = memberRepository.findListByUsername("AAA");
+        listMember.stream().forEach(m -> System.out.println("*** m = " + m));
+
+        Member oneMember = memberRepository.findOneByUsername("CCC");
+        assertThat(oneMember).isNull();
+
+        assertThatThrownBy(() -> memberRepository.findOptionalByUsername("AAA"))
+                .isInstanceOf(IncorrectResultSizeDataAccessException.class);
+    }
 }
 

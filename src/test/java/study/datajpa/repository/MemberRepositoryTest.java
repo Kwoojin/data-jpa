@@ -16,6 +16,8 @@ import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
 import study.datajpa.entity.Team;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -31,6 +33,7 @@ class MemberRepositoryTest {
 
     @Autowired MemberRepository memberRepository;
     @Autowired TeamRepository teamRepository;
+    @PersistenceContext EntityManager em;
 
     /**
      * Rollback false 로 인한
@@ -38,7 +41,7 @@ class MemberRepositoryTest {
      */
     @AfterEach
     void afterEach() {
-        memberRepository.deleteAll();
+        memberRepository.deleteAllInBatch();
     }
 
     @Test
@@ -209,7 +212,6 @@ class MemberRepositoryTest {
 
     }
 
-
     @Test
     public void paging_slice() {
         for(int i=1; i<=10; i++) {
@@ -229,7 +231,24 @@ class MemberRepositoryTest {
         assertThat(page.getNumber()).isEqualTo(0);
         assertThat(page.isFirst()).isTrue();
         assertThat(page.hasNext()).isTrue();
+    }
 
+    @Test
+    public void bulkUpdate() {
+        //given
+        for(int i=1; i<=5; i++) {
+            memberRepository.save(new Member("member"+i, 10+i*5, null));
+        }
+
+        //when
+        int resultCount = memberRepository.bulkAgePlus(20);
+//        em.clear();
+
+        Member member = memberRepository.findByUsername("member5").get(0);
+        System.out.println("member.getAge() = " + member.getAge());
+
+        //then
+        assertThat(resultCount).isEqualTo(4);
     }
 }
 

@@ -86,4 +86,28 @@ class MemberJpaRepositoryTest {
         assertThat(result.get(0).getUsername()).isEqualTo("BBB");
     }
 
+    @Test
+    public void paging() {
+        for(int i=1; i<=10; i++) {
+            memberJpaRepository.save(new Member("member"+i, 10+i*5, null));
+        }
+
+        int age = 10;
+        int offset = 1;
+        int limit = 3;
+
+        List<Member> members = memberJpaRepository.findByPage(age, offset, limit);
+        long totalCount = memberJpaRepository.totalCount(age);
+
+        //페이지 계산 공식 적용
+        // totalPage = totalCount / size ...
+        // 마지막 페이지...
+        // 최초 페이지..
+
+        assertThat(members.size()).isEqualTo(3);
+        assertThat(totalCount).isEqualTo(10);
+
+    }
+
+
 }

@@ -1,5 +1,7 @@
 package study.datajpa.repository;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,6 +19,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 class MemberRepositoryTest {
 
     @Autowired MemberRepository memberRepository;
+
+    /**
+     * Rollback false 로 인한
+     * 실행되는 Query 확인용
+     */
+    @AfterEach
+    void afterEach() {
+        memberRepository.deleteAll();
+    }
 
     @Test
     public void testMember() {
@@ -58,6 +69,38 @@ class MemberRepositoryTest {
 
         long deleteCount = memberRepository.count();
         assertThat(deleteCount).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("NamedQuery")
+    public void findByUsernameAndAgeGreaterThanEqual() {
+        Member member1 = new Member("AAA", 10, null);
+        Member member2 = new Member("AAA", 20, null);
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+
+        List<Member> result = memberRepository.findByUsernameAndAgeGreaterThanEqual("AAA", 15);
+
+        assertThat(result.get(0).getUsername()).isEqualTo("AAA");
+        assertThat(result.get(0).getAge()).isEqualTo(20);
+        assertThat(result.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void findHelloBy() {
+        List<Member> helloBy = memberRepository.findTop3HelloBy();
+//        helloBy.stream().forEach(member -> System.out.println("member = " + member));
+    }
+
+    @Test
+    public void namedQuery() {
+        Member member1 = new Member("AAA", 10, null);
+        Member member2 = new Member("BBB", 20, null);
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+
+        List<Member> result = memberRepository.findByUsername("BBB");
+        assertThat(result.get(0).getUsername()).isEqualTo("BBB");
     }
 }
 

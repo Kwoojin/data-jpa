@@ -1,6 +1,7 @@
 package study.datajpa.dto;
 
 import lombok.Getter;
+import org.springframework.util.Assert;
 import study.datajpa.entity.Member;
 
 @Getter
@@ -17,6 +18,7 @@ public class MemberDto {
     }
 
     public MemberDto(Member member) {
+        Assert.notNull(member.getId(), "id 필수값");
         this.id = member.getId();
         this.username = member.getUsername();
         this.teamName = null;

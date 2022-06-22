@@ -388,5 +388,31 @@ class MemberRepositoryTest {
             System.out.println("usernameOnly.username = " + usernameOnly.getUsername());
         }
     }
+
+    @Test
+    public void projectionsV2() {
+        //given
+        Team teamA = new Team("teamA");
+        em.persist(teamA);
+
+        Member m1 = new Member("m1", 20, teamA);
+        Member m2 = new Member("m2", 20, teamA);
+        em.persist(m1);
+        em.persist(m2);
+
+        em.flush();
+        em.clear();
+
+        //when
+//        List<UsernameOnlyDto> result = memberRepository.findProjectionsV2ByUsername("m1");
+//        List<UsernameOnlyDto> result = memberRepository.findProjectionsV3ByUsername("m1", UsernameOnlyDto.class);
+        List<NestedClosedProjections> result = memberRepository.findProjectionsV3ByUsername("m1", NestedClosedProjections.class);
+
+        for (NestedClosedProjections data : result) {
+            System.out.println("data = " + data);
+            System.out.println("data.username = " + data.getUsername());
+            System.out.println("data.team = " + data.getTeam());
+        }
+    }
 }
 

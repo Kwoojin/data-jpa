@@ -13,7 +13,10 @@ import javax.persistence.QueryHint;
 import java.util.List;
 import java.util.Optional;
 
-public interface MemberRepository extends JpaRepository<Member, Long>, MemberRepositoryCustom {
+/**
+ * JpaSpecificationExecutor 사용 X
+ */
+public interface MemberRepository extends JpaRepository<Member, Long>, MemberRepositoryCustom, JpaSpecificationExecutor<Member> {
     List<Member> findByUsernameAndAgeGreaterThanEqual(String username, int age);
 
     List<Member> findTop3HelloBy();

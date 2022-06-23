@@ -25,7 +25,10 @@ public class MemberController {
         return member.getUsername();
     }
 
-    //Spring Data JPA 기능
+    /**
+     * Spring Data JPA 기능
+     * find 없이 member.getUsername 바로 반환 가능
+     */
     @GetMapping("/members/{id}")
     public String findMemberV2(@PathVariable("id") Member member) {
         return member.getUsername();
